@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace AdventOfCode._2024.Days;
+﻿namespace AdventOfCode._2024.Days;
 
 public class Day2 : BaseDay
 {
