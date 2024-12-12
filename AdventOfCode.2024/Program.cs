@@ -1,3 +1,3 @@
 ﻿using AdventOfCode._2024.Days;
 
-var day = new Day5();
+var day = new Day6();
