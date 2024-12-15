@@ -2,86 +2,87 @@
 
 public class Day6 : BaseDay
 {
+    private char[][] _originalMap;
+    private (int X, int Y) _guardPosition;
     public Day6() : base("06")
     {
     }
     
     protected override void Solve(List<string> lines)
     {
-        var map = lines.Select(x => x.ToCharArray()).ToArray();
-        var guardPosition = GetInitialGuardPosition(map);
-        var direction = MoveDirection.Up; //TODO: Maybe this can differ in the input?
+        // Part 1
+        _originalMap = lines.Select(x => x.ToCharArray()).ToArray();
+        _guardPosition = GetInitialGuardPosition(_originalMap);
         
-        while (true)
-        {
-            var nextPosition = GetNextPosition(guardPosition, direction);
-            //Check if next position is out of bounds (guard has moved off the map)
-            if (nextPosition.Y < 0 || nextPosition.Y >= map.Length || nextPosition.X < 0 || nextPosition.X >= map[nextPosition.Y].Length)
-            {
-                break;
-            }
-            
-            if (map[nextPosition.Y][nextPosition.X] == '#')
-            {
-                direction = direction.MakeTurn();
-            }
-            else
-            {
-                map[guardPosition.Y][guardPosition.X] = '1';
-                guardPosition = nextPosition;
-            }
-        }
-        
-        //Count the number of visited cells
-        var visitedCells = map.SelectMany((x) => x).Count(x => x == '1') + 1; //+1 for the starting position
-        PrintSolution(1, visitedCells.ToString());
+        var visitedCells = Move(_originalMap); 
+        PrintSolution(1, visitedCells.Points.Count.ToString());
         
         // Part 2
-        var visitedPoints = map.SelectMany((x, Y) => x.Where(c => c == '1').Select((_, X) => (X, Y)));
-       
-        var possibleObstacles = new List<(int Y, int X)>();
-        foreach (var point in visitedPoints)
+        var possibleObstacles = 0;
+        foreach (var point in visitedCells.Points)
         {
-            // Reset the playing field
-            map = lines.Select(x => x.ToCharArray()).ToArray();
-            var guardPosition2 = GetInitialGuardPosition(map);
-            var direction2 = MoveDirection.Up;
+            // Skip the point if it is the starting position
+            if(_guardPosition.X == point.X && _guardPosition.Y == point.Y)
+            {
+                continue;
+            }
+
+            var map = _originalMap.CopyMap();
             
             // Try to set the point as a new obstacle
             map[point.Y][point.X] = '0';
             
-            var visitedDirectedPoints = new List<(int Y, int X, MoveDirection Direction)>();
-            
-            while (true)
+            var (_, isLoop) = Move(map);
+            if (isLoop)
             {
-                //Is in loop (guard has visited this point before with the same direction)
-                if (visitedDirectedPoints.Any(x => x.Y == guardPosition2.X && x.X == guardPosition2.Y && x.Direction == direction2))
-                {
-                    possibleObstacles.Add(point);
-                    break;
-                }
-                
-                var nextPosition = GetNextPosition(guardPosition2, direction2);
-                //Check if next position is out of bounds (guard has moved off the map)
-                if (nextPosition.Y < 0 || nextPosition.Y >= map.Length || nextPosition.X < 0 || nextPosition.X >= map[nextPosition.Y].Length)
-                {
-                    break;
-                }
-            
-                visitedDirectedPoints.Add((guardPosition2.X, guardPosition2.Y, direction2));
-                if (map[nextPosition.Y][nextPosition.X] == '#' || map[nextPosition.Y][nextPosition.X] == '0')
-                {
-                    direction2 = direction2.MakeTurn();
-                }
-                else
-                {
-                    guardPosition2 = nextPosition;
-                }
+                possibleObstacles++;
             }
         }
         
-        PrintSolution(2, possibleObstacles.Count.ToString());
+        PrintSolution(2, possibleObstacles.ToString());
+    }
+
+    private (HashSet<(int X, int Y)> Points, bool IsLoop) Move(char[][] map)
+    {
+        var guardPosition = _guardPosition;
+        var direction = MoveDirection.Up;
+        var isLoop = false;
         
+        var visitedPoints = new HashSet<(int X, int Y)>();
+        var visitedStates = new HashSet<(int X, int Y, MoveDirection Direction)>();
+        
+        while (true)
+        {
+            var nextPosition = GetNextPosition(guardPosition, direction);
+            
+            //Check if next position is out of bounds (guard has moved off the map)
+            if (nextPosition.Y < 0 || nextPosition.Y >= map.Length || nextPosition.X < 0 || nextPosition.X >= map[nextPosition.Y].Length)
+            {
+                break;
+            } 
+            
+            //Guard has reached an obstacle
+            if (map[nextPosition.Y][nextPosition.X] == '#' || map[nextPosition.Y][nextPosition.X] == '0')
+            {
+                direction = direction.MakeTurn();
+            }
+            //Guard is free to move
+            else
+            {
+                guardPosition = nextPosition;
+
+                // If the guard has visited this point before with the same direction, it is in a loop (a hashset can only contain unique values, so it returns false if the point has been added before)
+                if (!visitedStates.Add((guardPosition.X, guardPosition.Y, direction)))
+                {
+                    isLoop = true;
+                    break;
+                }
+                
+                visitedPoints.Add((guardPosition.X, guardPosition.Y));
+            }
+        }
+
+        return (visitedPoints, isLoop);
     }
     
     private static (int X, int Y) GetInitialGuardPosition(char[][] map)
@@ -109,6 +110,8 @@ public class Day6 : BaseDay
             MoveDirection.Left => (currentPosition.X - 1, currentPosition.Y),
             _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
         };
+
+
 }
 
 enum MoveDirection
@@ -119,7 +122,7 @@ enum MoveDirection
     Left = 3
 }
 
-static class MoveDirectionExtensions
+internal static class Day6Extensions
 {
     public static MoveDirection MakeTurn(this MoveDirection direction)
     {
@@ -131,6 +134,17 @@ static class MoveDirectionExtensions
             MoveDirection.Left => MoveDirection.Up,
             _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
         };
+    }
+    
+    public static char[][] CopyMap(this char[][] map)
+    {
+        var newMap = new char[map.Length][];
+        for (int i = 0; i < map.Length; i++)
+        {
+            newMap[i] = new char[map[i].Length];
+            Array.Copy(map[i], newMap[i], map[i].Length);
+        }
+        return newMap;
     }
 }
 
