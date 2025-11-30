@@ -4,9 +4,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode", "AdventOfCod
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Years", "Years", "{1A2577C0-2FD5-4623-ABC3-4DD232698D1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.2024", "AdventOfCode.2024\AdventOfCode.2024.csproj", "{56DCDD3E-C8DC-480A-8970-1015EDCB8A15}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Y2024", "AdventOfCode.Y2024\AdventOfCode.Y2024.csproj", "{56DCDD3E-C8DC-480A-8970-1015EDCB8A15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.2022", "AdventOfCode.2022\AdventOfCode.2022.csproj", "{2EE80657-CCAB-479A-9007-DE1C4A91BA45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Y2022", "AdventOfCode.Y2022\AdventOfCode.Y2022.csproj", "{2EE80657-CCAB-479A-9007-DE1C4A91BA45}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F47125CF-E509-41A4-9DDE-3D5F7466E8F3}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

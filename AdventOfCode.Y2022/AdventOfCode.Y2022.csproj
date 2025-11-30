@@ -1,9 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
-        <RootNamespace>AdventOfCode</RootNamespace>
+        <OutputType>Exe</OutputType>
     </PropertyGroup>
+
     <ItemGroup>
-<!--      <PackageReference Include="BenchmarkDotNet" />-->
+      <ProjectReference Include="..\AdventOfCode\AdventOfCode.csproj" />
     </ItemGroup>
 
 </Project>
