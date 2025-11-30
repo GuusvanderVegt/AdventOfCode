@@ -7,4 +7,5 @@
     <ItemGroup>
       <ProjectReference Include="..\AdventOfCode\AdventOfCode.csproj" />
     </ItemGroup>
+
 </Project>

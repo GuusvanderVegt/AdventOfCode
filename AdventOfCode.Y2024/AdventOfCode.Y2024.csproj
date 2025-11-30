@@ -7,11 +7,4 @@
     <ItemGroup>
       <ProjectReference Include="..\AdventOfCode\AdventOfCode.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Content Include="Files\*">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-
 </Project>
