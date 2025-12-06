@@ -2,4 +2,4 @@
 
 using AdventOfCode.Y2025.Days;
 
-new Day5();
+new Day6();
