@@ -7,7 +7,7 @@ public class Day6 : BaseDay
 
     protected override void Solve(List<string> lines)
     {
-        var worksheet = ParseWorksheet(lines);
+        var worksheet = ParseWorksheetV2(lines);
         var operators = lines.Last().Split(" ").Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
         
         Part1(worksheet, operators);
@@ -71,7 +71,13 @@ public class Day6 : BaseDay
 
     private static List<string>[] ParseWorksheet(List<string> lines)
     {
-        var worksheet = new List<string>[lines.Count - 1];
+        var rowCount = lines.Count - 1;
+        var worksheet = new List<string>[rowCount];
+
+        for (int i = 0; i < rowCount; i++)
+        {
+            worksheet[i] = new List<string>();
+        }
 
         var maxLength = lines.Max(line => line.Length);
         var currentCol = 0;
@@ -94,20 +100,50 @@ public class Day6 : BaseDay
 
             for (int j = 0; j < colChars.Count; j++)
             {
-                var character = colChars[j];
-
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-                if (worksheet[j] == null)
-                {
-                    worksheet[j] = new List<string>();
-                }
-
                 if (worksheet[j].Count == 0 || worksheet[j].Count <= currentCol)
                 {
                     worksheet[j].Add(string.Empty);
                 }
 
-                worksheet[j][currentCol] += character.ToString();
+                worksheet[j][currentCol] += colChars[j].ToString();
+            }
+        }
+
+        return worksheet;
+    }
+    
+    private static List<string>[] ParseWorksheetV2(List<string> lines)
+    {
+        var rowCount = lines.Count - 1;
+        var worksheet = new List<string>[rowCount];
+
+        for (var i = 0; i < rowCount; i++)
+        {
+            worksheet[i] = [];
+        }
+
+        List<int> colSeparatorIndexes = [-1];
+        for (var i = 0; i < lines[0].Length; i++)
+        {
+            var characters = lines.Select(line => line[i]).ToList();
+            if (characters.All(c => c == ' '))
+            {
+                colSeparatorIndexes.Add(i);
+            }
+        }
+        colSeparatorIndexes.Add(lines[0].Length);
+
+
+        for (var x = 1; x < colSeparatorIndexes.Count; x++)
+        {
+            var startIndex = colSeparatorIndexes[x - 1] + 1;
+            var length = colSeparatorIndexes[x] - startIndex;
+            
+            for (var i = 0; i < rowCount; i++)
+            {
+                var line = lines[i];
+                var column = line.Substring(startIndex, length);
+                worksheet[i].Add(column);
             }
         }
 
